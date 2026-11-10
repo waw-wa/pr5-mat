@@ -150,7 +150,44 @@ def run_block_3():
     plt.savefig("graphics/block3_latency_tail.png", dpi=300)
     plt.close()
 
+#=============================================================================
+#БЛОК 4: Варіант 8 (Тривалість сесії, Exp(0.01))
+#=============================================================================
+
+def run_block_4():
+    print("=== БЛОК 4: Варіант 8 (Тривалість сесії, Exp(0.01)) ===")
+    N = 100000
+    lmbda = 0.01
+    
+    # Генеруємо вибірку сесій
+    sessions = np.random.exponential(1 / lmbda, N)
+    
+    # Теоретичні значення для p50 та p90
+    theor_p50 = np.log(2) / lmbda        # ~69.31 с
+    theor_p90 = -np.log(0.10) / lmbda    # ~230.26 с
+    
+    # Практичні значення
+    emp_p50 = np.percentile(sessions, 50)
+    emp_p90 = np.percentile(sessions, 90)
+    
+    print(f"p50: Практика = {emp_p50:.2f} с | Теорія = {theor_p50:.2f} с")
+    print(f"p90: Практика = {emp_p90:.2f} с | Теорія = {theor_p90:.2f} с\n")
+
+    plt.figure()
+    plt.hist(sessions, bins=100, density=True, alpha=0.6, color='teal')
+    plt.axvline(emp_p50, color='g', linestyle='--', label=f'p50 = {emp_p50:.1f} с')
+    plt.axvline(emp_p90, color='r', linestyle='--', label=f'p90 = {emp_p90:.1f} с')
+    plt.xlim(0, 500)
+    plt.title("Блок 4: Тривалість сесії користувача")
+    plt.xlabel("Час, с")
+    plt.ylabel("Щільність")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig("graphics/block4_user_session.png", dpi=300)
+    plt.close()
+
 if __name__ == "__main__":
     run_block_1()
     run_block_2()
     run_block_3()
+    run_block_4()

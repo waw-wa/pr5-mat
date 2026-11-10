@@ -102,8 +102,55 @@ def run_block_2():
     plt.savefig("graphics/block2_exp_mtbf.png", dpi=300)
     plt.close()
 
+#=============================================================================
+#БЛОК 3: Перцентильний аналіз затримок (Latency Tail)
+#=============================================================================
 
+def run_block_3():
+    print("=== БЛОК 3: Перцентильний аналіз затримок (Latency Tail) ===")
+    N = 100000
+    
+    # Створюємо масив затримок: 90% звичайні (Normal), 10% важкі (Exp)
+    latencies = []
+    for _ in range(N):
+        if random.random() < 0.90:
+            val = random.gauss(20, 4) # Нормальний N(20, 4^2)
+        else:
+            val = random.expovariate(0.01) # Показниковий Exp(0.01)
+        latencies.append(val)
+        
+    latencies = np.array(latencies)
+    latencies = np.maximum(latencies, 0) # Прибираємо від'ємні значення
+    
+    # Обчислюємо перцентилі
+    p50 = np.percentile(latencies, 50)
+    p90 = np.percentile(latencies, 90)
+    p95 = np.percentile(latencies, 95)
+    p99 = np.percentile(latencies, 99)
+    
+    print(f"Середнє M[X] = {np.mean(latencies):.2f} мс")
+    print(f"p50 (медіана) = {p50:.2f} мс")
+    print(f"p90           = {p90:.2f} мс")
+    print(f"p95           = {p95:.2f} мс")
+    print(f"p99           = {p99:.2f} мс\n")
+
+    # Графік затримок
+    plt.figure()
+    plt.hist(latencies, bins=100, density=True, alpha=0.6, color='purple')
+    plt.axvline(p50, color='g', linestyle='--', label=f'p50 = {p50:.1f}')
+    plt.axvline(p90, color='b', linestyle='--', label=f'p90 = {p90:.1f}')
+    plt.axvline(p95, color='orange', linestyle='--', label=f'p95 = {p95:.1f}')
+    plt.axvline(p99, color='r', linestyle='--', label=f'p99 = {p99:.1f}')
+    plt.xlim(0, 250)
+    plt.title("Блок 3: Розподіл затримок ПЗ")
+    plt.xlabel("Затримка, мс")
+    plt.ylabel("Щільність")
+    plt.legend()
+    plt.grid(True)
+    plt.savefig("graphics/block3_latency_tail.png", dpi=300)
+    plt.close()
 
 if __name__ == "__main__":
     run_block_1()
     run_block_2()
+    run_block_3()
